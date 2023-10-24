@@ -44,6 +44,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-var-requires': 'off',
     'react/jsx-uses-react': 'off',
+    'react/prefer-stateless-function': 0,
   },
   settings: {
     react: {
