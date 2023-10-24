@@ -51,4 +51,5 @@ module.exports = {
       version: 'detect',
     },
   },
+  ignorePatterns: ['.eslintrc.cjs', 'vite.config.ts'],
 };
