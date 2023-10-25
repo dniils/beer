@@ -1,11 +1,8 @@
-import { useState } from 'react';
-import BeerPreview from './BeerPreview';
 import '../styles/SearchResults.scss';
-import beerData from '../beerData.json';
+import BeerPreview from './BeerPreview';
+import BeerInterface from '../types/BeerInterface';
 
-function SearchResults() {
-  const [beers] = useState([...beerData]);
-
+function SearchResults({ beers }: { beers: BeerInterface[] }) {
   return (
     <div className="search-results">
       {beers.map((beer) => (
