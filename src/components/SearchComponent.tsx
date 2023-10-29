@@ -1,6 +1,10 @@
 import '../styles/Search.scss';
 import React, { Component } from 'react';
 
+function removeMultipleSpaces(s: string): string {
+  return s.replace(/\s+/g, ' ').trim();
+}
+
 interface SearchComponentProps {
   onSearchTermUpdate: (searchTerm: string) => void;
 }
@@ -25,9 +29,11 @@ class SearchComponent extends Component<
     e.preventDefault();
     const { onSearchTermUpdate } = this.props;
     const newSearchTerm = (e.target as HTMLFormElement).searchInput.value;
-    this.setState({ inputValue: newSearchTerm });
-    onSearchTermUpdate(newSearchTerm);
-    localStorage.setItem('searchTerm', newSearchTerm);
+    const cleanedSearchTerm = removeMultipleSpaces(newSearchTerm);
+
+    this.setState({ inputValue: cleanedSearchTerm });
+    onSearchTermUpdate(cleanedSearchTerm);
+    localStorage.setItem('searchTerm', cleanedSearchTerm);
   };
 
   render() {
