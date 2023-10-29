@@ -1,5 +1,6 @@
 import BeerInterface from '../types/BeerInterface';
 import '../styles/BeerPreview.scss';
+import noImageImage from '../assets/images/no-image-for-this-beer.png';
 
 type BeerPreviewProp = Pick<
   BeerInterface,
@@ -17,7 +18,7 @@ function BeerPreview({ beer }: { beer: BeerPreviewProp }) {
   return (
     <div className="beer-preview">
       <img
-        src={beer.image_url}
+        src={beer.image_url ? beer.image_url : noImageImage}
         alt="beer-img"
         className="beer-preview__image"
       />

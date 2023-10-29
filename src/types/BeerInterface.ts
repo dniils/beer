@@ -1,40 +1,56 @@
-import HopsType from './HopsType';
+type StringOrNull = string | null;
+type NumberOrNull = number | null;
+
+type AmountType = {
+  value: NumberOrNull;
+  unit: string;
+};
+
+type MaltType = {
+  name: string;
+  amount: AmountType;
+};
+
+type HopsType = {
+  name: string;
+  amount: AmountType;
+  add: string;
+  attribute: string;
+};
 
 export default interface BeerInterface {
   id: number;
   name: string;
-  tagline: string;
-  first_brewed: string;
+  tagline: StringOrNull;
+  first_brewed: StringOrNull;
   description: string;
-  image_url: string;
-  abv: number;
-  ibu: number;
-  target_fg: number;
-  target_og: number;
-  ebc: number;
-  srm: number;
-  ph: number;
-  attenuation_level: number;
-  volume: { value: number; unit: string };
-  boil_volume: { value: number; unit: string };
+  image_url: StringOrNull;
+  abv: NumberOrNull;
+  ibu: NumberOrNull;
+  target_fg: NumberOrNull;
+  target_og: NumberOrNull;
+  ebc: NumberOrNull;
+  srm: NumberOrNull;
+  ph: NumberOrNull;
+  attenuation_level: NumberOrNull;
+  volume: { value: NumberOrNull; unit: string };
+  boil_volume: { value: NumberOrNull; unit: string };
   method: {
-    mash_temp: [{ temp: { value: number; unit: string }; duration: number }];
-    fermentation: { temp: { value: number; unit: string } };
-    twist: null;
+    mash_temp: [
+      {
+        temp: { value: NumberOrNull; unit: StringOrNull };
+        duration: NumberOrNull;
+      },
+    ];
+    fermentation: { temp: { value: NumberOrNull; unit: string } };
+    twist: StringOrNull;
   };
   ingredients: {
-    malt: [
-      {
-        name: string;
-        amount: { value: number; unit: string };
-      },
-      { name: string; amount: { value: number; unit: string } },
-      { name: string; amount: { value: number; unit: string } },
-    ];
+    malt: MaltType[];
     hops: HopsType[];
-    yeast: string;
+    yeast: StringOrNull;
   };
   food_pairing: string[];
-  brewers_tips: string;
+  brewers_tips: StringOrNull;
   contributed_by: string;
 }
