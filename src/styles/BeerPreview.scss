@@ -1,0 +1,44 @@
+.beer-preview {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1rem;
+  max-width: 40rem;
+  margin: 0 auto;
+
+  &__image {
+    width: 6rem;
+    object-fit: contain;
+    align-self: center;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__title {
+    align-self: flex-start;
+  }
+
+  &__description {
+    color: #3e3e3e;
+    text-align: justify;
+  }
+
+  &__button {
+    padding: 0.2rem 0.5rem;
+    background-color: #fff;
+    border: 1px solid #000;
+    align-self: flex-end;
+  }
+
+  &__content-and-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+}
