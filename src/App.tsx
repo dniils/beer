@@ -22,10 +22,11 @@ function App() {
           : getBeerData(pageNumber, beersPerPage));
 
         if (data.length) {
-          setBeers(data);
+          setNextButtonEnabled(true);
         } else {
           setNextButtonEnabled(false);
         }
+        setBeers(data);
       } catch (error) {
         console.error('Error fetching beer data:', error);
       }
@@ -69,8 +70,9 @@ function App() {
         <ul className="app-info">
           <li>Search Term: {`"${savedSearchTerm}"`}</li>
           <li>
-            <span>Beers per page: </span>
+            <span>Beers per page (min: 1, max: 20): </span>
             <input
+              style={{ color: 'blue' }}
               type="number"
               id="beersPerPage"
               name="beers-per-page"
@@ -86,6 +88,14 @@ function App() {
         </ul>
         <SearchComponent onSearchTermUpdate={handleSearchTermUpdate} />
         <SearchResults beers={beers} />
+
+        <div
+          style={{ display: 'flex', justifyContent: 'center', margin: '1rem' }}
+        >
+          {beers.length === 0 &&
+            `Seems like that's all we got for your search term!`}
+        </div>
+
         <div className="buttons">
           <button
             type="button"
