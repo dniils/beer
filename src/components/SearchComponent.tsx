@@ -1,7 +1,7 @@
+import { useState } from 'react';
 import '../styles/Search.scss';
-import React, { Component } from 'react';
 
-function removeMultipleSpaces(s: string): string {
+function removeMultipleSpaces(s: string) {
   return s.replace(/\s+/g, ' ').trim();
 }
 
@@ -9,50 +9,39 @@ interface SearchComponentProps {
   onSearchTermUpdate: (searchTerm: string) => void;
 }
 
-interface SearchComponentState {
-  inputValue: string;
-}
+function SearchComponent({ onSearchTermUpdate }: SearchComponentProps) {
+  const [inputValue, setInputValue] = useState<string>(() => {
+    return localStorage.getItem('searchTerm') || '';
+  });
 
-class SearchComponent extends Component<
-  SearchComponentProps,
-  SearchComponentState
-> {
-  constructor(props: SearchComponentProps) {
-    super(props);
-
-    this.state = {
-      inputValue: localStorage.getItem('searchTerm') || '',
-    };
-  }
-
-  searchBeer = (e: React.FormEvent) => {
+  const searchBeer = (e: React.FormEvent) => {
     e.preventDefault();
-    const { onSearchTermUpdate } = this.props;
     const newSearchTerm = (e.target as HTMLFormElement).searchInput.value;
     const cleanedSearchTerm = removeMultipleSpaces(newSearchTerm);
 
-    this.setState({ inputValue: cleanedSearchTerm });
+    setInputValue(cleanedSearchTerm);
     onSearchTermUpdate(cleanedSearchTerm);
     localStorage.setItem('searchTerm', cleanedSearchTerm);
   };
 
-  render() {
-    const { inputValue } = this.state;
-    return (
-      <form className="search" onSubmit={this.searchBeer}>
-        <input
-          type="text"
-          name="searchInput"
-          className="search__input"
-          value={inputValue}
-          onChange={(e) => this.setState({ inputValue: e.target.value })}
-        />
-        <button type="submit" className="search__button">
-          🍺
-        </button>
-      </form>
-    );
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>): void {
+    setInputValue(e.target.value);
   }
+
+  return (
+    <form className="search" onSubmit={searchBeer}>
+      <input
+        type="text"
+        name="searchInput"
+        className="search__input"
+        value={inputValue}
+        onChange={handleInputChange}
+      />
+      <button type="submit" className="search__button">
+        🍺
+      </button>
+    </form>
+  );
 }
 
 export default SearchComponent;

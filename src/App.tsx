@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import './styles/App.css';
 import SearchComponent from './components/SearchComponent';
 import SearchResults from './components/SearchResults';
@@ -7,68 +7,48 @@ import { getBeerData, searchBeers } from './api/api';
 import ErrorBoundary from './components/ErrorBoundary';
 import ErrorButton from './components/ErrorButton';
 
-interface AppProps {}
-
-interface AppState {
-  savedSearchTerm: string | null;
-  beers: BeerInterface[];
-}
-
 const BEERS_PER_PAGE = 10;
 
-class App extends Component<AppProps, AppState> {
-  constructor(props: AppProps) {
-    super(props);
+function App() {
+  const [savedSearchTerm, setSavedSearchTerm] = useState<string | null>('');
+  const [beers, setBeers] = useState<BeerInterface[]>([]);
 
-    this.state = {
-      savedSearchTerm: '',
-      beers: [],
-    };
-  }
-
-  async componentDidMount() {
-    const savedSearchTerm = localStorage.getItem('searchTerm');
-    this.setState({ savedSearchTerm }, () => {
-      this.fetchData(savedSearchTerm || '');
-    });
-  }
-
-  handleSearchTermUpdate = (searchTerm: string) => {
-    this.setState({ savedSearchTerm: searchTerm }, () => {
-      this.fetchData(searchTerm);
-    });
-  };
-
-  async fetchData(searchTerm: string) {
+  const fetchData = async (searchTerm: string) => {
     try {
       const data = await (searchTerm
         ? searchBeers(searchTerm, BEERS_PER_PAGE)
         : getBeerData(1, BEERS_PER_PAGE));
-      this.setState({ beers: data });
+      setBeers(data);
     } catch (error) {
       console.error('Error fetching beer data:', error);
     }
-  }
+  };
 
-  render() {
-    const { beers, savedSearchTerm } = this.state;
+  const handleSearchTermUpdate = (searchTerm: string) => {
+    setSavedSearchTerm(searchTerm);
+    fetchData(searchTerm);
+  };
 
-    return (
-      <ErrorBoundary>
-        <div className="app-container">
-          <ul className="app-info">
-            <li>Search Term: {`"${savedSearchTerm}"`}</li>
-            <li>BEERS_PER_PAGE: {BEERS_PER_PAGE}</li>
-            <li>
-              <ErrorButton />
-            </li>
-          </ul>
-          <SearchComponent onSearchTermUpdate={this.handleSearchTermUpdate} />
-          <SearchResults beers={beers} />
-        </div>
-      </ErrorBoundary>
-    );
-  }
+  useEffect(() => {
+    setSavedSearchTerm(localStorage.getItem('searchTerm') || '');
+    fetchData(savedSearchTerm || '');
+  }, [savedSearchTerm]);
+
+  return (
+    <ErrorBoundary>
+      <div className="app-container">
+        <ul className="app-info">
+          <li>Search Term: {`"${savedSearchTerm}"`}</li>
+          <li>BEERS_PER_PAGE: {BEERS_PER_PAGE}</li>
+          <li>
+            <ErrorButton />
+          </li>
+        </ul>
+        <SearchComponent onSearchTermUpdate={handleSearchTermUpdate} />
+        <SearchResults beers={beers} />
+      </div>
+    </ErrorBoundary>
+  );
 }
 
 export default App;
