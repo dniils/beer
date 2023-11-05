@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './styles/App.scss';
 import SearchComponent from './components/SearchComponent';
 import SearchResults from './components/SearchResults';
@@ -7,29 +7,31 @@ import { getBeerData, searchBeers } from './api/api';
 import ErrorBoundary from './components/ErrorBoundary';
 import ErrorButton from './components/ErrorButton';
 
-const BEERS_PER_PAGE = 2;
-
 function App() {
   const [savedSearchTerm, setSavedSearchTerm] = useState<string | null>('');
   const [beers, setBeers] = useState<BeerInterface[]>([]);
   const [page, setPage] = useState<number>(1);
+  const [beersPerPage, setBeersPerPage] = useState<number>(2);
   const [nextButtonEnabled, setNextButtonEnabled] = useState<boolean>(true);
 
-  async function fetchData(searchTerm: string, pageNumber: number) {
-    try {
-      const data = await (searchTerm
-        ? searchBeers(pageNumber, searchTerm, BEERS_PER_PAGE)
-        : getBeerData(pageNumber, BEERS_PER_PAGE));
+  const fetchData = useCallback(
+    async (searchTerm: string, pageNumber: number) => {
+      try {
+        const data = await (searchTerm
+          ? searchBeers(pageNumber, searchTerm, beersPerPage)
+          : getBeerData(pageNumber, beersPerPage));
 
-      if (data.length) {
-        setBeers(data);
-      } else {
-        setNextButtonEnabled(false);
+        if (data.length) {
+          setBeers(data);
+        } else {
+          setNextButtonEnabled(false);
+        }
+      } catch (error) {
+        console.error('Error fetching beer data:', error);
       }
-    } catch (error) {
-      console.error('Error fetching beer data:', error);
-    }
-  }
+    },
+    [beersPerPage]
+  );
 
   const handleSearchTermUpdate = (searchTerm: string) => {
     setSavedSearchTerm(searchTerm);
@@ -37,11 +39,19 @@ function App() {
     fetchData(searchTerm, page);
   };
 
+  const handleBeersPerPageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPage(1);
+    const newBeersAmountPerPage: number = +event.target.value;
+    setBeersPerPage(newBeersAmountPerPage);
+  };
+
   useEffect(() => {
     const initialSearchTerm = localStorage.getItem('searchTerm') || '';
     setSavedSearchTerm(initialSearchTerm);
     fetchData(initialSearchTerm, page);
-  }, [page]);
+  }, [page, beersPerPage, fetchData]);
 
   const handlePrevPage = () => {
     if (page > 1) {
@@ -58,7 +68,18 @@ function App() {
       <div className="app-container">
         <ul className="app-info">
           <li>Search Term: {`"${savedSearchTerm}"`}</li>
-          <li>BEERS_PER_PAGE: {BEERS_PER_PAGE}</li>
+          <li>
+            <span>Beers per page: </span>
+            <input
+              type="number"
+              id="beersPerPage"
+              name="beers-per-page"
+              min="1"
+              max="20"
+              value={beersPerPage}
+              onChange={handleBeersPerPageChange}
+            />
+          </li>
           <li>
             <ErrorButton />
           </li>
