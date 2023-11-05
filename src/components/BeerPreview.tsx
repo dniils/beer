@@ -29,9 +29,6 @@ function BeerPreview({ beer }: { beer: BeerPreviewProp }) {
             {makeTextShorter(beer.description)}
           </div>
         </div>
-        <button type="button" className="beer-preview__button">
-          Learn More
-        </button>
       </div>
     </div>
   );
